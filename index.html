@@ -19,11 +19,22 @@ html,body {
 .desktop canvas {
  	transform: scale(-1, 1);
 }
+	
+.video {
+    position: fixed; right: 0; bottom: 0;
+    min-width: 100%; min-height: 100%;
+    width: auto; height: auto; z-index: -100;
+}
+.canvas {
+    position: fixed; right: 0; bottom: 0;
+    min-width: 100%; min-height: 100%;
+    width: auto; height: auto; z-index: -100;
+}	
 </style>
 </head>
 <body>
-<video width="640" height="480" id="video" autoplay playsinline></video>
-<canvas id="renderCanvas" width="640" height="480"></canvas>
+<video id="video" class="video" width="640" height="480" autoplay playsinline></video>
+<canvas id="renderCanvas" class="canvas" width="640" height="480"></canvas>
 <h1>NFT marker example with Bablyon.js</h1>
 <p>On Chrome on Android, tap the screen to start playing video stream.</p>
 <p>Show  <a href="https://github.com/artoolkit/artoolkit5/blob/master/doc/Marker%20images/pinball.jpg">Pinball image</a> to camera to display a colorful object on top of it. Tap the screen to rotate the object.
