@@ -12,11 +12,11 @@ html,body {
 	text-align: center;
 	overflow-x: hidden;
 }
-.portrait canvas, video {
+.portrait canvas {
 	transform-origin: 0 0;
 	transform: rotate(-90deg) translateX(-100%);
 }
-.desktop canvas, video {
+.desktop canvas {
  	transform: scale(-1, 1);
 }
 </style>
@@ -37,7 +37,7 @@ html,body {
 window.canvas = document.getElementById('renderCanvas');
 window.ARBabylonOnLoad = function() {
 
-	ARController.getUserMediaBabylonScene({maxARVideoSize: 320, cameraParam: 'data/camera_para.dat', 
+	ARController.getUserMediaBabylonScene({facing: 'environment';maxARVideoSize: 320, cameraParam: 'data/camera_para.dat', 
 	onSuccess: function(arScene, arController, arCamera) {
 
 		document.body.className = arController.orientation;
