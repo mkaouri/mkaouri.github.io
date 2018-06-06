@@ -37,7 +37,7 @@ html,body {
 window.canvas = document.getElementById('renderCanvas');
 window.ARBabylonOnLoad = function() {
 
-	ARController.getUserMediaBabylonScene({facing: 'environment';maxARVideoSize: 320, cameraParam: 'data/camera_para.dat', 
+	ARController.getUserMediaBabylonScene({facing: 'environment', maxARVideoSize: 320, cameraParam: 'data/camera_para.dat', 
 	onSuccess: function(arScene, arController, arCamera) {
 
 		document.body.className = arController.orientation;
