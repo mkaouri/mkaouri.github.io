@@ -1,108 +1,87 @@
+  
+<!DOCTYPE html>
 <html>
 <head>
-<title>NFT marker example with Babylon.js</title>
-<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
+<meta charset="utf-8">
+<meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height" />
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<style>
-html,body {
-	margin: 0;
-	padding: 0;
-	width: 100%;
-	text-align: center;
-	overflow-x: hidden;
-}
-.portrait canvas {
-	transform-origin: 0 0;
-	transform: rotate(-90deg) translateX(-100%);
-}
-.desktop canvas {
- 	transform: scale(-1, 1);
-}
-	
-.video {
-    position: fixed; right: 0; bottom: 0;
-    width: auto; height: auto; z-index: -100;
-}
-.canvas {
-    position: fixed; right: 0; bottom: 0;
-    width: auto; height: auto; z-index: -100;
-}	
-</style>
+<title></title>
 </head>
 <body>
-<video id="video" class="video" width="640" height="480" autoplay playsinline></video>
-<canvas id="renderCanvas" class="canvas" width="640" height="480"></canvas>
-<h1>NFT marker example with Bablyon.js</h1>
-<p>On Chrome on Android, tap the screen to start playing video stream.</p>
-<p>Show  <a href="https://github.com/artoolkit/artoolkit5/blob/master/doc/Marker%20images/pinball.jpg">Pinball image</a> to camera to display a colorful object on top of it. Tap the screen to rotate the object.
+<!-- Load TensorFlow.js. This is required to use MobileNet. -->
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs/dist/tf.min.js"> </script>
+<!-- Load the MobileNet model. -->
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/mobilenet@1.0.0"> </script>
 
-<script async src="js/artoolkit.min.js"></script>
-<script src="js/babylon.2.5.max.js"></script>
-<script async src="js/artoolkit.babylon.js"></script>
+<script src="talkify.min.js"></script>
 
-
+<!-- Replace this with your image. Make sure CORS settings allow reading the image! -->
+<video class="video" width="50%" height="50%" id="video" autoplay="true" playsinline></video>
+<h1 id="message"> </h1>
+<!-- Place your code in the script tag below. You can also use an external .js file -->
 <script>
-window.canvas = document.getElementById('renderCanvas');
-window.ARBabylonOnLoad = function() {
+  // Notice there is no 'import' statement. 'mobilenet' and 'tf' is
+  // available on the index-page because of the script tag above.
 
-	ARController.getUserMediaBabylonScene({facingMode: 'environment', maxARVideoSize: 320, cameraParam: 'data/camera_para.dat', 
-	onSuccess: function(arScene, arController, arCamera) {
-
-		document.body.className = arController.orientation;
-		
-		var engine = new BABYLON.Engine(window.canvas, true);
-        engine.setSize(window.canvas.width, window.canvas.height);
-		
-		if (arController.orientation === 'portrait') {
-			var w = (window.innerWidth / arController.videoHeight) * arController.videoWidth;
-			var h = window.innerWidth;
-			engine.setSize(w, h);
-			engine.domElement.style.paddingBottom = (w-h) + 'px';
-		} else {
-			if (/Android|mobile|iPad|iPhone/i.test(navigator.userAgent)) {
-				engine.setSize(window.innerWidth, (window.innerWidth / arController.videoWidth) * arController.videoHeight);
-			} else {
-				engine.setSize(arController.videoWidth, arController.videoHeight);
-				document.body.className += ' desktop';
-			}
-		}
-
-		var light = new BABYLON.HemisphericLight('light1', new BABYLON.Vector3(1, 0, 0), arScene.scene);
-		
-		var box = BABYLON.Mesh.CreateBox('box1', 1, arScene.scene);
-		box.position.z = 40;
-		box.position.x = 80;
-		box.position.y = 80;
-		var scalingFactor = new BABYLON.Vector3(100, 100, 100);
-		box.scaling = scalingFactor;
-		box.isVisible = false;
-		
-		arController.loadNFTMarker('dataNFT/pinball', function(markerId) {
-		    var markerRoot = arController.createBabylonNFTMarker(markerId, arScene.scene);
-			box.parent = markerRoot;
-		});
-					
-		engine.runRenderLoop(function () {		
-			arScene.process();
-			arScene.scene.render();
-		});
-
-        // the canvas/window resize event handler
-        window.addEventListener('resize', function () {
-            engine.resize();
-        });		
-
-	}});
-
-	delete window.ARBabylonOnLoad;
-
+  var getJSON = function(url, callback) {
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', url, true);
+    xhr.responseType = 'json';
+    xhr.onload = function() {
+      var status = xhr.status;
+      if (status === 200) {
+        callback(null, xhr.response);
+      } else {
+        callback(status, xhr.response);
+      }
+    };
+    xhr.send();
 };
 
-if (window.ARController && ARController.getUserMediaBabylonScene) {
-	ARBabylonOnLoad();
-}
-</script>
+  const video = document.getElementById('video');
+  
+  if (navigator.mediaDevices.getUserMedia) {
+    navigator.mediaDevices.getUserMedia({ video: true })
+      .then(function (stream) {
+        video.srcObject = stream;
+      })
+      .catch(function (err0r) {
+        console.log("Something went wrong!");
+      });
+  }
 
+  video.onloadeddata = (event) => {
+  // Load the model.
+  mobilenet.load().then((net) => {
+    console.log("Model loaded to memory!");
+    // Step 2: Grab and classify
+    net.classify(video).then((result) => {
+      // Step 3: Print top result
+
+      talkify.config.remoteService.active = true;
+      talkify.config.remoteService.host = 'https://talkify.net';
+      talkify.config.remoteService.apiKey = '46b32f4e-6b73-40ee-8ae1-4a17cb1b18f6';
+      var player = new talkify.Html5Player()
+                      .forceLanguage("en-US");
+      var player2 = new talkify.Html5Player()
+                      .forceLanguage("en-US");
+      
+      getJSON('https://api.dictionaryapi.dev/api/v2/entries/en_US/'+result[0].className.split(",")[0].replace(/\s/g, ''), function(err, data) {
+        // JSON result in `data` variable
+        document.getElementById("message").innerText = `
+        Probability: ${result[0].probability}
+        Detected: ${result[0].className.split(",")[0].replace(/\s/g, '')}       
+        Definition: ${data[0].meanings[0].definitions[0].definition}`;
+        player.playText(`${result[0].className.split(",")[0].replace(/\s/g, '')}`);
+        player2.playText(`${data[0].meanings[0].definitions[0].definition}`);
+      });
+
+    });
+  });
+  };
+
+
+</script>
 </body>
 </html>
