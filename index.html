@@ -32,7 +32,7 @@
 
 <!-- Replace this with your image. Make sure CORS settings allow reading the image! -->
 <video class="video" id="video" width="100%" height="100%" autoplay="true" playsinline ></video>
-<h2 id="message"> </h2>
+<h3 id="message"> </h3>
 <!-- Place your code in the script tag below. You can also use an external .js file -->
 <script>
   // Notice there is no 'import' statement. 'mobilenet' and 'tf' is
@@ -80,11 +80,11 @@ function captureImage() {
 img.width = IMAGE_SIZE;
 img.height = IMAGE_SIZE;
   if (img.complete && img.naturalHeight !== 0) {
-    console.log("Image loaded to memory!");
+    document.getElementById("message").innerText ="Image loaded to memory!";
     detect(img);
 } else {
 img.onload = () => {
-  console.log("Image loaded to memory!");
+  document.getElementById("message").innerText ="Image loaded to memory!";
   detect(img);
 };
 };
@@ -109,7 +109,7 @@ img.onload = () => {
   // Load the model.
   function detect(imgElement){
   mobilenet.load().then((net) => {
-    console.log("Model loaded to memory!");
+    document.getElementById("message").innerText ="Model loaded to memory!";
     // Step 2: Grab and classify
     net.classify(imgElement).then((result) => {
       // Step 3: Print top result
