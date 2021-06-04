@@ -128,11 +128,11 @@ function captureImage() {
 img.width = IMAGE_SIZE;
 img.height = IMAGE_SIZE;
   if (img.complete && img.naturalHeight !== 0) {
-    //document.getElementById("message").innerText ="Image loaded to memory!";
+    document.getElementById("message").innerText ="Loading...";
     detect(img);
 } else {
 img.onload = () => {
-  //document.getElementById("message").innerText ="Image loaded to memory!";
+  document.getElementById("message").innerText ="Loading...";
   detect(img);
 };
 };
@@ -157,7 +157,7 @@ img.onload = () => {
   // Load the model.
 function detect(imgElement){
   cocoSsd.load().then(model => {
-    //document.getElementById("message").innerText ="Model loaded to memory!";
+    document.getElementById("message").innerText ="Processing Object. Please Wait! <br/>If taking long time, please reload page.";
     // Step 2: Grab and classify
     model.detect(imgElement).then((result) => {
     // Step 3: Print top result
