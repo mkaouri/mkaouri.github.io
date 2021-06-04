@@ -71,6 +71,18 @@ const IMAGE_SIZE = 224;
 var synth = speechSynthesis;
 var voices = synth.getVoices();
 
+let hasEnabledVoice = false;
+
+document.addEventListener('click', () => {
+  if (hasEnabledVoice) {
+    return;
+  }
+  const lecture = new SpeechSynthesisUtterance('hello');
+  lecture.volume = 0;
+  speechSynthesis.speak(lecture);
+  hasEnabledVoice = true;
+});
+
 function captureImage() {
   var canvas = document.createElement("canvas");
   canvas.width = video.videoWidth * scale;
